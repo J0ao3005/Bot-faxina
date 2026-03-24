@@ -2,11 +2,13 @@ import datetime
 from collections import deque
 import requests
 import json
+import urllib.parse
+import os
 
 # Lista com os 8 moradores da república
 moradores = [
     'Mixirika', 'Bbzaum', 'Paldselfi', 'Jab',
-    'Zé do Caroço', 'B.Guilherme', 'B.Henryke','B.Lucas'
+    'Ze do Caroco', 'B.Guilherme', 'B.Henryke','B.Lucas'
 ]
 
 # Dicionário com os cômodos e a quantidade de pessoas necessárias
@@ -69,23 +71,25 @@ texto_whatsapp = montar_mensagem(escala_atual)
 
 print(texto_whatsapp)
 
-# ==========================================
-# Exemplo de como seria o envio via API (POST)
-# ==========================================
 def enviar_whatsapp(mensagem):
-    # URL fictícia de uma API de WhatsApp (como a API Oficial ou WAPI)
-    url_api = "https://sua-api-de-whatsapp.com/send"
+    url = "https://api.callmebot.com/whatsapp.php"
     
-    payload = {
-        "chatId": "ID_DO_GRUPO_DA_REPUBLICA", 
-        "text": mensagem
+    parametros = {
+        "phone": os.environ.get("PHONE_NUMBER"), # Puxa do cofre
+        "text": mensagem,
+        "apikey": os.environ.get("API_KEY")      # Puxa do cofre
     }
     
-    headers = {
-        "Authorization": "Bearer SUA_CHAVE_DE_API",
-        "Content-Type": "application/json"
-    }
+    resposta = requests.get(url, params=parametros)
     
-    # Descomentar  linha abaixo quando tiver uma API configurada
-    # response = requests.post(url_api, json=payload, headers=headers)
-    # print(response.status_code)
+    if resposta.status_code == 200:
+        print("Mensagem enviada com sucesso para a Masmorra!")
+    else:
+        print(f"Erro ao enviar: {resposta.text}")
+
+# Gerando e enviando
+escala_atual = gerar_escala()
+texto_whatsapp = montar_mensagem(escala_atual)
+
+# Dispara a mensagem
+enviar_whatsapp(texto_whatsapp)
