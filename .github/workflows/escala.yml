@@ -2,9 +2,11 @@ name: Bot da Masmorra
 
 on:
   schedule:
-    # Roda toda quarta-feira às 12:00 UTC (09:00 no horário de Brasília)
     - cron: '0 12 * * 3'
-  workflow_dispatch: # Permite que você rode manualmente pelo site para testar
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   rodar-escala:
@@ -14,8 +16,9 @@ jobs:
     - name: Fazer checkout do código
       uses: actions/checkout@v4
 
+    # Atualizei para v5 aqui também
     - name: Configurar o Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
