@@ -1,0 +1,91 @@
+import datetime
+from collections import deque
+import requests
+import json
+
+# Lista com os 8 moradores da república
+moradores = [
+    'Mixirika', 'Bbzaum', 'Paldselfi', 'Jab',
+    'Zé do Caroço', 'B.Guilherme', 'B.Henryke','B.Lucas'
+]
+
+# Dicionário com os cômodos e a quantidade de pessoas necessárias
+tarefas = {
+    "Sala + lavabo": 1,
+    "Copa + toda escada": 1,
+    "Cozinha": 2,
+    "Banheiro principal": 1,
+    "Banheiro do quarto": 1,
+    "Escada + Banheiro de fora": 2
+}
+
+
+def gerar_escala():
+    # Define a data exata em que essa ordem original da lista deve valer
+    # Formato: Ano, Mês, Dia (Coloquei a data que a ordem atual começou a valer, por exemplo, 23/03/2026 (Sujeito a mudanças))
+    data_inicio = datetime.date(2026, 3, 23) 
+    hoje = datetime.date.today()
+    
+    # Calcula quantas semanas inteiras se passaram desde a data de início
+    semanas_passadas = (hoje - data_inicio).days // 7
+    
+    fila_moradores = deque(moradores)
+    
+    # Rotaciona a fila para a DIREITA (positivo) -- (Caso queira rotacionar para a esquerda, usar um valor negativo).
+    # Na primeira semana, semanas_passadas é 0, então ninguém sai do lugar.
+    fila_moradores.rotate(semanas_passadas)
+    
+    escala = []
+    
+    for tarefa, qtd_vagas in tarefas.items():
+        responsaveis = []
+        for _ in range(qtd_vagas):
+            responsaveis.append(fila_moradores.popleft())
+        
+        escala.append(f"{tarefa} - {' + '.join(responsaveis)}")
+    
+    
+    return escala
+
+def montar_mensagem(escala):
+    # Calcula a data da próxima quarta-feira
+    hoje = datetime.date.today()
+    dias_para_quarta = (2 - hoje.weekday()) % 7
+    if dias_para_quarta == 0 and hoje.weekday() != 2:
+        dias_para_quarta = 7
+    proxima_quarta = hoje + datetime.timedelta(days=dias_para_quarta)
+    data_formatada = proxima_quarta.strftime("%d/%m")
+
+    # Texto final (Sujeito a mudanças, principalmente a parte do emoji e formatação)
+    mensagem = f"⛔ *Faxina de QUARTA-FEIRA {data_formatada}*\n\n"
+    mensagem += "\n".join(escala)
+    
+    return mensagem
+
+# Geração da escala
+
+escala_atual = gerar_escala()
+texto_whatsapp = montar_mensagem(escala_atual)
+
+print(texto_whatsapp)
+
+# ==========================================
+# Exemplo de como seria o envio via API (POST)
+# ==========================================
+def enviar_whatsapp(mensagem):
+    # URL fictícia de uma API de WhatsApp (como a API Oficial ou WAPI)
+    url_api = "https://sua-api-de-whatsapp.com/send"
+    
+    payload = {
+        "chatId": "ID_DO_GRUPO_DA_REPUBLICA", 
+        "text": mensagem
+    }
+    
+    headers = {
+        "Authorization": "Bearer SUA_CHAVE_DE_API",
+        "Content-Type": "application/json"
+    }
+    
+    # Descomentar  linha abaixo quando tiver uma API configurada
+    # response = requests.post(url_api, json=payload, headers=headers)
+    # print(response.status_code)
