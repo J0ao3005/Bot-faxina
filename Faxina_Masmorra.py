@@ -14,18 +14,19 @@ moradores = [
 # Dicionário com os cômodos e a quantidade de pessoas necessárias
 tarefas = {
     "Sala + lavabo": 1,
-    "Copa + toda escada": 1,
+    "Copa": 1,
+    "Escada dentro de casa": 1,
     "Cozinha": 2,
     "Banheiro principal": 1,
     "Banheiro do quarto": 1,
-    "Escada + Banheiro de fora": 2
+    "Escada da entrada": 1
 }
 
 
 def gerar_escala():
     # Define a data exata em que essa ordem original da lista deve valer
     # Formato: Ano, Mês, Dia (Coloquei a data que a ordem atual começou a valer, por exemplo, 23/03/2026 (Sujeito a mudanças))
-    data_inicio = datetime.date(2026, 3, 23) 
+    data_inicio = datetime.date(2026, 4, 14) 
     hoje = datetime.date.today()
     
     # Calcula quantas semanas inteiras se passaram desde a data de início
