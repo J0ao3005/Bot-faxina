@@ -2,7 +2,7 @@ name: Bot da Masmorra
 
 on:
   schedule:
-    - cron: '0 12 * * 3'
+    - cron: '0 1 * * 3' # Executa toda quarta-feira às 01:00 UTC (00:00 no horário de Brasília)
   workflow_dispatch:
 
 env:
